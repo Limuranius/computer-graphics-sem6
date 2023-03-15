@@ -5,6 +5,7 @@ import Borders
 from Primitives import PolarPoint
 from BaseObjects import BaseDrawable
 import pygame
+from OptimizedObjects import PolygonOptimized
 
 Drawer.init()
 
@@ -14,15 +15,14 @@ class Engine:
     running: bool = False
 
     def init_objects(self):
-        benis = Objects.Polygon(
-            [(227, 272), (221, 284), (204, 292), (184, 285), (173, 266), (171, 244), (186, 233), (205, 231), (206, 220),
-             (209, 201), (212, 186), (215, 167), (221, 152), (226, 145), (240, 146), (249, 154), (254, 167), (255, 178),
-             (255, 194), (257, 209), (256, 224), (263, 231), (277, 239), (284, 257), (287, 269), (286, 281), (277, 291),
-             (258, 292), (246, 286), (236, 272)],
-            rotation_axis=(227, 292),
-        )
         self.objects += [
-            benis
+            PolygonOptimized("Polygons/N.txt", x=50, y=100, size=20),
+            PolygonOptimized("Polygons/I.txt", x=100, y=100, size=20),
+            PolygonOptimized("Polygons/G.txt", x=150, y=100, size=20),
+            PolygonOptimized("Polygons/G.txt", x=200, y=100, size=20),
+            PolygonOptimized("Polygons/E.txt", x=250, y=100, size=20),
+            PolygonOptimized("Polygons/R.txt", x=300, y=100, size=20),
+            PolygonOptimized("Polygons/S.txt", x=350, y=100, size=20),
         ]
 
     def fill_background(self):
@@ -40,13 +40,8 @@ class Engine:
 
     def main_loop(self):
         import random
-        # self.objects[0].rotation_angle += 0.5
-        for edge in self.objects[0].edges:
-            edge.p0.x += (random.random() - 0.5) * 20
-            edge.p1.x += (random.random() - 0.5) * 20
-            edge.p0.y += (random.random() - 0.5) * 20
-            edge.p1.y += (random.random() - 0.5) * 20
-        self.objects[0].draw_triangles()
+        self.objects[0].angle += 0.1
+        self.objects[0].size += random.random() - 0.5
 
     def run(self):
         self.init_objects()
