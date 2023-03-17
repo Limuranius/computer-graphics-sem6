@@ -1,6 +1,7 @@
 from Primitives import *
 from typing import Optional
 import math
+from enum import Enum
 
 
 def degrees_to_radians(angle: float) -> float:
@@ -76,35 +77,85 @@ def cyrus_beck_algorithm(line: Line, borders: list[Border]) -> tuple[bool, Optio
     return True, new_line
 
 
-def polygon_to_triangles(points: list[PointVector]) -> list[Triangle]:
-    # Добавляем в конец первый элемент и в начало последний чтобы не делать отдельных проверок на границы
-    triangles = []
-    old_points = [points[0]] + points + [points[-1]]
-    while len(old_points) > 3:
-        i = 1
-        new_points = []  # Вершины урезанного полигона, после одной итерации
-        while i <= len(old_points) - 2:
-            p_prev = old_points[i-1]
-            p_curr = old_points[i]
-            p_next = old_points[i+1]
+def point_inside_triangle(point: PointVector, a: PointVector, b: PointVector, c: PointVector):
+    """Возвращает True, если точка point находится внутри треугольника abc"""
 
-            # Проверяем, где находится точка
-            vect = p_next - p_prev
-            norm = vect.get_normal()
-            mid_p_vect = p_curr - p_prev
-            product = norm * mid_p_vect  # Скалярное произведения нормали и вектора до средней точки
-            if product <= 0:  # Точка находится "слева"
-                triangles.append(Triangle(p_prev, p_curr, p_next, Color.random()))
-                if p_prev not in new_points:  # Нужно оптимизировать
-                    new_points.append(p_prev)
-                if p_next not in new_points:  # Нужно оптимизировать
-                    new_points.append(p_next)
-                i += 2
-            else:  # Точка находится "справа"
-                if p_curr not in new_points:  # Нужно оптимизировать
-                    new_points.append(p_curr)
-                i += 1
-        old_points = new_points
-    if len(old_points) == 3:
-        triangles.append(Triangle(old_points[0], old_points[1], old_points[2], Color.random()))
+    ab = b - a
+    bc = c - b
+    ca = a - c
+
+    ap = point - a
+    bp = point - b
+    cp = point - c
+
+    cross1 = ab.cross_product(ap)
+    cross2 = bc.cross_product(bp)
+    cross3 = ca.cross_product(cp)
+
+    return cross1 >= 0 and cross2 >= 0 and cross3 >= 0
+
+
+class WindingOrder(Enum):
+    CLOCKWISE = 1
+    COUNTERCLOCKWISE = 2
+
+
+def find_polygon_area_and_winding_order(points: list[PointVector]) -> tuple[float, WindingOrder]:
+    """Находит площадь полигона и направление вращения его точек"""
+
+    area = 0
+    for i in range(len(points)):
+        a = points[i]
+        b = points[(i + 1) % len(points)]
+        width = b.x - a.x
+        height = (a.y + b.y) / 2
+        area += width * height
+    if area >= 0:
+        return area, WindingOrder.COUNTERCLOCKWISE
+    else:
+        return -area, WindingOrder.CLOCKWISE
+
+def get_item(arr: list, index: int):
+    index = index % len(arr)
+    return arr[index]
+
+
+def polygon_to_triangles(points: list[PointVector]) -> list[Triangle]:
+    """Находит треугольники полигона методом отсечения ушей"""
+
+    triangles = []
+    index_list = list(range(len(points)))
+
+    while len(index_list) > 3:
+        for i in range(len(index_list)):
+            i_prev = get_item(index_list, i-1)
+            i_curr = get_item(index_list, i)
+            i_next = get_item(index_list, i+1)
+
+            b = points[i_prev]
+            a = points[i_curr]
+            c = points[i_next]
+
+            ab = b - a
+            ac = c - a
+
+            if ab.cross_product(ac) < 0:  # Угол острый, можно попробовать отсечь треугольник
+                can_clip = True
+
+                # Проверяем, входят ли другие точки в треугольник abc
+                for index in index_list:
+                    if index == i_prev or index == i_curr or index == i_next:
+                        continue
+                    point = points[index]
+                    if point_inside_triangle(point, b, a, c):
+                        can_clip = False
+                        break
+
+                # Обрезаем треугольник
+                if can_clip:
+                    triangles.append(Triangle(b, a, c))
+                    del index_list[i]
+                    break  # Начинаем сначала просмотр всех вершин
+
+    triangles.append(Triangle(points[index_list[0]], points[index_list[1]], points[index_list[2]]))
     return triangles
