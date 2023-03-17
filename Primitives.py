@@ -3,7 +3,7 @@ import math
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 import Drawer
-from Colors import Color
+from Colors import Color, ColorType
 
 
 @dataclass
@@ -48,6 +48,10 @@ class PointVector:  # Точка / Вектор
             self.x
         )
 
+    def cross_product(self, other: PointVector) -> float:
+        """Возвращает "векторное произведение" """
+        return self.x * other.y - self.y * other.x
+
 
 @dataclass
 class PolarPoint:
@@ -70,7 +74,7 @@ class PolarPoint:
 
 
 class BasePrimitive(ABC):
-    color: Color
+    color: ColorType
 
     @abstractmethod
     def draw(self):
@@ -82,7 +86,7 @@ class Line(BasePrimitive):
     p1: PointVector
 
     def __init__(self, p0: tuple[float, float] | PointVector, p1: tuple[float, float] | PointVector,
-                 color: Color = Color.WHITE):
+                 color: ColorType = Color.WHITE):
         if isinstance(p0, tuple):
             self.p0 = PointVector(p0[0], p0[1])
         elif isinstance(p0, PointVector):
@@ -137,7 +141,7 @@ class Triangle(BasePrimitive):
     p2: PointVector
 
     def __init__(self, p0: tuple[float, float] | PointVector, p1: tuple[float, float] | PointVector,
-                 p2: tuple[float, float] | PointVector, color: Color = Color.WHITE):
+                 p2: tuple[float, float] | PointVector, color: ColorType = Color.WHITE):
         if isinstance(p0, tuple):
             self.p0 = PointVector(*p0)
         elif isinstance(p0, PointVector):
