@@ -1,9 +1,16 @@
 import pygame
+from GraphicsAlgorithms import find_polygon_area_and_winding_order, WindingOrder
+from Primitives import PointVector
+import os
 
 pygame.init()
 screen = pygame.display.set_mode([500, 500])
 
-"""Утилита, с помощью которой можно нарисовать многоугольник и получить его в нормализованном виде"""
+"""
+Утилита, с помощью которой можно нарисовать многоугольник и сохранить его в файл
+Координаты сохраняются в нормализованном виде
+Направление вращение переводится на по часовой стрелке
+"""
 
 POLYGONS_DIR = "../Polygons"
 
@@ -42,13 +49,26 @@ def normalise_polygon(polygon: list[tuple[float, float]]) -> list[tuple[float, f
     return normalised_points
 
 
-def save_polygon_to_file(polygon: list[tuple[float, float]]):
-    import os
-    file_name = input("Название: ") + ".txt"
-    file_path = os.path.join(POLYGONS_DIR, file_name)
+def save_polygon_to_file(polygon: list[tuple[float, float]], file_name: str = None):
+    if file_name is None:
+        file_name = input("Название: ")
+    file_path = os.path.join(POLYGONS_DIR, file_name + ".txt")
     with open(file_path, "w") as file:
         for x, y in polygon:
             file.write(f"{x} {y}\n")
+
+
+def change_winding_in_file(file_name: str):
+    coords = []
+    file_path = os.path.join(POLYGONS_DIR, file_name + ".txt")
+    with open(file_path, "r") as file:
+        lines = file.read().strip().split("\n")
+    for line in lines:
+        x, y = (float(num) for num in line.split())
+        coords.append((x, y))
+    _, winding = find_polygon_area_and_winding_order([PointVector(x, y) for x, y in coords])
+    print("Предыдущее вращение: ", winding)
+    save_polygon_to_file(coords[::-1], file_name)
 
 
 def main():
@@ -72,7 +92,14 @@ def main():
         pygame.display.flip()  # Обновление окна
 
     pygame.quit()
-    save_polygon_to_file(normalise_polygon(points))
+    area, winding = find_polygon_area_and_winding_order([PointVector(x, y) for x, y in points])
+    print(area, winding)
+    if winding == WindingOrder.COUNTERCLOCKWISE:
+        print("Сейчас вращение против часовой стрелки. Переводим на часовую стрелку")
+        save_polygon_to_file(normalise_polygon(points[::-1]))
+    else:
+        save_polygon_to_file(normalise_polygon(points))
+
 
 
 main()
