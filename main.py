@@ -10,19 +10,52 @@ from OptimizedObjects import PolygonOptimized
 Drawer.init()
 
 
+class FPSCounter:
+    TICKS_RANGE = 100  # От скольки тиков берётся среднее
+    ticks: int  # Счётчик тиков
+    range_sum: float
+    ticks_stack: list[float]
+
+    def __init__(self):
+        self.clock = pygame.time.Clock()
+        self.ticks = 0
+        self.font = pygame.font.SysFont("Verdana", 20)
+        self.range_sum = self.clock.tick()
+        self.ticks_stack = [self.range_sum]
+
+    def render(self, surface: pygame.Surface):
+        text = self.font.render("{:.1f}".format(self.get_fps()), True, (255, 255, 255))
+        surface.blit(text, (0, 0))
+
+    def get_fps(self) -> float:
+        self.ticks += 1
+        tick = self.clock.tick()
+        self.ticks_stack.append(tick)
+        self.range_sum += tick
+        if self.ticks >= self.TICKS_RANGE:
+            top_tick = self.ticks_stack.pop(0)
+            self.range_sum -= top_tick
+        avg_ticks = self.range_sum / self.TICKS_RANGE
+        return 1000 / avg_ticks
+
+
 class Engine:
     objects: list[BaseDrawable] = []
     running: bool = False
+    fps = FPSCounter()
 
     def init_objects(self):
         self.objects += [
-            PolygonOptimized("Polygons/N.txt", x=50, y=100, size=20),
-            PolygonOptimized("Polygons/I.txt", x=100, y=100, size=20),
-            PolygonOptimized("Polygons/G.txt", x=150, y=100, size=20),
-            PolygonOptimized("Polygons/G.txt", x=200, y=100, size=20),
-            PolygonOptimized("Polygons/E.txt", x=250, y=100, size=20),
-            PolygonOptimized("Polygons/R.txt", x=300, y=100, size=20),
-            PolygonOptimized("Polygons/S.txt", x=350, y=100, size=20),
+            PolygonOptimized("Polygons/N.txt", x=100, y=100, size=40),
+            PolygonOptimized("Polygons/I.txt", x=200, y=100, size=40),
+            PolygonOptimized("Polygons/G.txt", x=300, y=100, size=40),
+            PolygonOptimized("Polygons/G.txt", x=400, y=100, size=40),
+            PolygonOptimized("Polygons/E.txt", x=500, y=100, size=40),
+            PolygonOptimized("Polygons/R.txt", x=600, y=100, size=40),
+            PolygonOptimized("Polygons/S.txt", x=700, y=100, size=40),
+            PolygonOptimized("Polygons/haha benis.txt", x=500, y=500, size=100),
+            PolygonOptimized("Polygons/star1.txt", x=200, y=500, size=200),
+            PolygonOptimized("Polygons/star2.txt", x=800, y=500, size=200),
         ]
 
     def fill_background(self):
@@ -40,8 +73,8 @@ class Engine:
 
     def main_loop(self):
         import random
-        self.objects[0].angle += 0.1
-        self.objects[0].size += random.random() - 0.5
+        for obj in self.objects:
+            obj.angle += 0.1
 
     def run(self):
         self.init_objects()
@@ -49,8 +82,11 @@ class Engine:
         while self.running:
             self.check_events()
             self.fill_background()
+
             self.main_loop()
             self.draw_objects()
+            self.fps.render(Drawer.screen)
+
             Drawer.update()
 
 
