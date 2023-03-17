@@ -1,7 +1,7 @@
 from pygame import Surface
 from typing import Optional
 import pygame
-from Colors import Color
+from Colors import Color, ColorType
 
 WIDTH = 1000
 HEIGHT = 800
@@ -21,7 +21,7 @@ def init():
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
 
 
-def _bresenham_draw_line(p0: tuple[float, float], p1: tuple[float, float], color: Color = Color.WHITE):
+def _bresenham_draw_line(p0: tuple[float, float], p1: tuple[float, float], color: ColorType = Color.WHITE):
     """Рисует линию, используя алгоритм Брезенхэма"""
     x1 = int(p0[0])
     y1 = int(p0[1])
@@ -39,7 +39,7 @@ def _bresenham_draw_line(p0: tuple[float, float], p1: tuple[float, float], color
         # p >= 0 - игрек нужно изменить
         p = 2 * dy - dx
         while x != x2:
-            screen.set_at((x, y), color.value)
+            screen.set_at((x, y), color)
             x += dx_sign
             if p < 0:
                 p += 2 * dy
@@ -52,7 +52,7 @@ def _bresenham_draw_line(p0: tuple[float, float], p1: tuple[float, float], color
         # p >= 0 - икс нужно изменить
         p = 2 * dx - dy
         while y != y2:
-            screen.set_at((x, y), color.value)
+            screen.set_at((x, y), color)
             y += dy_sign
             if p < 0:
                 p += 2 * dx
@@ -61,20 +61,20 @@ def _bresenham_draw_line(p0: tuple[float, float], p1: tuple[float, float], color
                 x += dx_sign
 
 
-def draw_line(p0: tuple[float, float], p1: tuple[float, float], color: Color = Color.WHITE):
+def draw_line(p0: tuple[float, float], p1: tuple[float, float], color: ColorType = Color.WHITE):
     if USE_BUILTIN_DRAW_LINE:
-        pygame.draw.line(screen, color.value, p0, p1)
+        pygame.draw.line(screen, color, p0, p1)
     else:
         _bresenham_draw_line(p0, p1, color)
 
 
 def fill_triangle(p0: tuple[float, float], p1: tuple[float, float], p2: tuple[float, float],
-                  color: Color = Color.WHITE):
-    pygame.draw.polygon(screen, color.value, [p0, p1, p2])
+                  color: ColorType = Color.WHITE):
+    pygame.draw.polygon(screen, color, [p0, p1, p2])
 
 
-def fill_background(color: Color):
-    screen.fill(color.value)
+def fill_background(color: ColorType):
+    screen.fill(color)
 
 
 def update():
