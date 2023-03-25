@@ -1,10 +1,7 @@
-from Primitives import *
-import Drawer
-from BaseObjects import BaseObject, BaseBorder
+from TwoD.Primitives import *
+from TwoD.BaseObjects import BaseObject, BaseBorder
 from math import sqrt, cos, sin, pi
-from GraphicsAlgorithms import degrees_to_radians, radians_to_degrees
-import GraphicsAlgorithms
-import time
+from TwoD.GraphicsAlgorithms import degrees_to_radians, polygon_to_triangles
 
 
 class LineObject(BaseObject):
@@ -43,7 +40,7 @@ class Polygon(BaseObject):
         points = [self.edges[0].p0]
         for edge in self.edges[:-1]:
             points.append(edge.p1)
-        triangles = GraphicsAlgorithms.polygon_to_triangles(points)
+        triangles = polygon_to_triangles(points)
         for triangle in triangles:
             triangle.draw()
 

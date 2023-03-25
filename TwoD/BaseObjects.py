@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 import Drawer
 from Colors import Color
-from Primitives import *
-from GraphicsAlgorithms import *
+from TwoD.Primitives import *
+from TwoD.GraphicsAlgorithms import *
 
 
 class BaseDrawable(ABC):

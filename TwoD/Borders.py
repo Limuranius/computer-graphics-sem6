@@ -1,5 +1,5 @@
-from Primitives import Border
-from BaseObjects import BaseBorder
+from TwoD.Primitives import Border
+from TwoD.BaseObjects import BaseBorder
 
 
 class RectangleBorder(BaseBorder):

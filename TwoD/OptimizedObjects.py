@@ -4,8 +4,8 @@ from Colors import Color, ColorType
 import numpy as np
 import Drawer
 from math import cos, sin, pi
-import GraphicsAlgorithms
-from Primitives import PointVector, Triangle
+import TwoD.GraphicsAlgorithms as GraphicsAlgorithms
+from TwoD.Primitives import PointVector, Triangle
 
 
 def np_array_to_points(points: np.ndarray) -> list[PointVector]:

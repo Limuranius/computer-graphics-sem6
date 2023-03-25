@@ -1,4 +1,4 @@
-from Primitives import *
+from TwoD.Primitives import *
 from typing import Optional
 import math
 from enum import Enum
@@ -115,6 +115,7 @@ def find_polygon_area_and_winding_order(points: list[PointVector]) -> tuple[floa
     else:
         return -area, WindingOrder.CLOCKWISE
 
+
 def get_item(arr: list, index: int):
     index = index % len(arr)
     return arr[index]
@@ -128,9 +129,9 @@ def polygon_to_triangles(points: list[PointVector]) -> list[Triangle]:
 
     while len(index_list) > 3:
         for i in range(len(index_list)):
-            i_prev = get_item(index_list, i-1)
+            i_prev = get_item(index_list, i - 1)
             i_curr = get_item(index_list, i)
-            i_next = get_item(index_list, i+1)
+            i_next = get_item(index_list, i + 1)
 
             b = points[i_prev]
             a = points[i_curr]
