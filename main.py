@@ -1,11 +1,7 @@
-import Objects
 from Colors import Color
 import Drawer
-import Borders
-from Primitives import PolarPoint
-from BaseObjects import BaseDrawable
 import pygame
-from OptimizedObjects import PolygonOptimized
+from ThreeD.Objects import FrameObject, Camera
 
 Drawer.init()
 
@@ -40,22 +36,16 @@ class FPSCounter:
 
 
 class Engine:
-    objects: list[BaseDrawable] = []
+    objects = []
     running: bool = False
     fps = FPSCounter()
+    camera = Camera()
 
     def init_objects(self):
         self.objects += [
-            PolygonOptimized("Polygons/N.txt", x=100, y=100, size=40),
-            PolygonOptimized("Polygons/I.txt", x=200, y=100, size=40),
-            PolygonOptimized("Polygons/G.txt", x=300, y=100, size=40),
-            PolygonOptimized("Polygons/G.txt", x=400, y=100, size=40),
-            PolygonOptimized("Polygons/E.txt", x=500, y=100, size=40),
-            PolygonOptimized("Polygons/R.txt", x=600, y=100, size=40),
-            PolygonOptimized("Polygons/S.txt", x=700, y=100, size=40),
-            PolygonOptimized("Polygons/haha benis.txt", x=500, y=500, size=100),
-            PolygonOptimized("Polygons/star1.txt", x=200, y=500, size=200),
-            PolygonOptimized("Polygons/star2.txt", x=800, y=500, size=200),
+            # FrameObject("ThreeD/Objects/Х.txt", x=-100, y=0, z=400),
+            # FrameObject("ThreeD/Objects/У.txt", x=0, y=0, z=400),
+            # FrameObject("ThreeD/Objects/И.txt", x=100, y=0, z=400)
         ]
 
     def fill_background(self):
@@ -63,7 +53,7 @@ class Engine:
 
     def draw_objects(self):
         for obj in self.objects:
-            obj.draw()
+            obj.draw(self.camera)
 
     def check_events(self):
         for event in pygame.event.get():
@@ -72,9 +62,11 @@ class Engine:
                     self.running = False
 
     def main_loop(self):
-        import random
+        # self.camera.fov += 0.1
         for obj in self.objects:
-            obj.angle += 0.1
+            obj.z_angle += 0.1
+            obj.x_angle += 0.1
+            obj.y_angle += 0.1
 
     def run(self):
         self.init_objects()
