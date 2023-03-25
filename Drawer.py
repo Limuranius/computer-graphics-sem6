@@ -8,7 +8,7 @@ HEIGHT = 800
 
 # Если True, то для отрисовки линии будет использоваться встроенный pygame.draw_line
 # Иначе будет использоваться написанный здесь алгоритм Брезенхэма
-USE_BUILTIN_DRAW_LINE = False
+USE_BUILTIN_DRAW_LINE = True
 
 """Рисует на экране и получает всякую информацию об экране"""
 
@@ -19,6 +19,14 @@ def init():
     pygame.init()
     global screen
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
+
+
+def screen_width():
+    return screen.get_width()
+
+
+def screen_height():
+    return screen.get_height()
 
 
 def _bresenham_draw_line(p0: tuple[float, float], p1: tuple[float, float], color: ColorType = Color.WHITE):
