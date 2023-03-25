@@ -1,6 +1,6 @@
 import pygame
-from GraphicsAlgorithms import find_polygon_area_and_winding_order, WindingOrder
-from Primitives import PointVector
+from TwoD.GraphicsAlgorithms import find_polygon_area_and_winding_order, WindingOrder
+from TwoD.Primitives import PointVector
 import os
 
 pygame.init()
@@ -12,7 +12,7 @@ screen = pygame.display.set_mode([500, 500])
 Направление вращение переводится на по часовой стрелке
 """
 
-POLYGONS_DIR = "../Polygons"
+POLYGONS_DIR = "../TwoD/Polygons"
 
 
 def draw_polygon(polygon: list[tuple[float, float]]) -> None:
